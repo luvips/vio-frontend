@@ -22,9 +22,6 @@ export default async function Home({
           <h1 className="text-4xl md:text-5xl font-black text-black leading-none mb-3">
             DESCUBRE LAS<br />MEJORES PELICULAS
           </h1>
-          <p className="text-sm font-semibold text-black opacity-60">
-            Ratings, resenas y listas de la comunidad cinematografica
-          </p>
         </div>
       </div>
 
