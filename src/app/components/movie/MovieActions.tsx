@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { addToFavorites, addToWatchLater } from "@/lib/api";
 import { useAuth } from "@/app/components/auth/AuthProvider";
-import { addStoredMovieId } from "@/lib/movies/lists";
+import {
+  addStoredMovieId,
+  getStoredMovieIds,
+  removeStoredMovieId,
+} from "@/lib/movies/lists";
 
 function humanizeError(error: unknown): string {
   if (error instanceof Error) return error.message;
@@ -13,9 +17,18 @@ function humanizeError(error: unknown): string {
 
 export default function MovieActions({ tmdbId }: { tmdbId: number }) {
   const { status, refreshSession } = useAuth();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isWatchLater, setIsWatchLater] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loadingAction, setLoadingAction] = useState<"favorite" | "watch_later" | null>(null);
+
+  useEffect(() => {
+    const favorites = getStoredMovieIds("favorites");
+    const watchLater = getStoredMovieIds("watchLater");
+    setIsFavorite(favorites.includes(tmdbId));
+    setIsWatchLater(watchLater.includes(tmdbId));
+  }, [tmdbId]);
 
   async function runAction(type: "favorite" | "watch_later") {
     setFeedback(null);
@@ -24,13 +37,27 @@ export default function MovieActions({ tmdbId }: { tmdbId: number }) {
 
     try {
       if (type === "favorite") {
-        const result = await addToFavorites(tmdbId);
-        addStoredMovieId("favorites", tmdbId);
-        setFeedback(result.message || "Anadido a favoritos");
+        if (isFavorite) {
+          removeStoredMovieId("favorites", tmdbId);
+          setIsFavorite(false);
+          setFeedback("Quitado de favoritos");
+        } else {
+          const result = await addToFavorites(tmdbId);
+          addStoredMovieId("favorites", tmdbId);
+          setIsFavorite(true);
+          setFeedback(result.message || "Anadido a favoritos");
+        }
       } else {
-        const result = await addToWatchLater(tmdbId);
-        addStoredMovieId("watchLater", tmdbId);
-        setFeedback(result.message || "Anadido a ver mas tarde");
+        if (isWatchLater) {
+          removeStoredMovieId("watchLater", tmdbId);
+          setIsWatchLater(false);
+          setFeedback("Quitado de ver mas tarde");
+        } else {
+          const result = await addToWatchLater(tmdbId);
+          addStoredMovieId("watchLater", tmdbId);
+          setIsWatchLater(true);
+          setFeedback(result.message || "Anadido a ver mas tarde");
+        }
       }
     } catch (err) {
       setError(humanizeError(err));
@@ -77,7 +104,11 @@ export default function MovieActions({ tmdbId }: { tmdbId: number }) {
           className="px-5 py-2.5 text-xs font-black tracking-widest uppercase transition-opacity hover:opacity-80 disabled:opacity-50"
           style={{ background: "#ffbd3f", color: "#000" }}
         >
-          {loadingAction === "favorite" ? "Guardando..." : "Agregar a favoritos"}
+          {loadingAction === "favorite"
+            ? "Guardando..."
+            : isFavorite
+              ? "Quitar de favoritos"
+              : "Agregar a favoritos"}
         </button>
         <button
           onClick={() => runAction("watch_later")}
@@ -85,7 +116,11 @@ export default function MovieActions({ tmdbId }: { tmdbId: number }) {
           className="px-5 py-2.5 text-xs font-black tracking-widest uppercase transition-opacity hover:opacity-80 disabled:opacity-50"
           style={{ background: "#000", color: "#ffbd3f" }}
         >
-          {loadingAction === "watch_later" ? "Guardando..." : "Ver mas tarde"}
+          {loadingAction === "watch_later"
+            ? "Guardando..."
+            : isWatchLater
+              ? "Quitar de ver mas tarde"
+              : "Ver mas tarde"}
         </button>
       </div>
 

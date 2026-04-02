@@ -1,5 +1,13 @@
 export async function fetchBackend<T>(path: string, init?: RequestInit): Promise<T> {
-  const url = path.startsWith("http") ? path : `/api/backend${path}`;
+  const relativeUrl = `/api/backend${path}`;
+  const serverBaseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+  const url = path.startsWith("http")
+    ? path
+    : typeof window === "undefined"
+      ? `${serverBaseUrl}${relativeUrl}`
+      : relativeUrl;
   const method = (init?.method ?? "GET").toUpperCase();
   const response = await fetch(url, {
     ...init,

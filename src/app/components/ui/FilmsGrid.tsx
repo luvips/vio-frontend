@@ -33,9 +33,17 @@ export default function FilmsGrid() {
         const data = (await response.json()) as { results?: unknown };
         const rawResults = Array.isArray(data.results) ? data.results : [];
         const parsed = rawResults
-          .map((item) => MovieSchema.safeParse(item))
-          .filter((result) => result.success)
-          .map((result) => result.data)
+          .map((item) => {
+            const parsedMovie = MovieSchema.safeParse(item);
+            const score =
+              typeof (item as { popularity?: unknown }).popularity === "number"
+                ? (item as { popularity: number }).popularity
+                : 0;
+            return { parsedMovie, score };
+          })
+          .filter((result) => result.parsedMovie.success)
+          .sort((a, b) => b.score - a.score)
+          .map((result) => result.parsedMovie.data)
           .slice(0, PAGE_SIZE);
 
         if (isMounted) {
@@ -101,7 +109,7 @@ export default function FilmsGrid() {
             Recomendado
           </p>
           <h2 className="text-xl font-black uppercase tracking-wide text-black">
-            Peliculas sugeridas
+            Mas populares
           </h2>
         </div>
         <span className="text-xs font-semibold" style={{ color: "#aaa" }}>
