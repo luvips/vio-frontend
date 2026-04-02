@@ -5,6 +5,7 @@ import TicketLabel from "@/app/components/movie/TicketLabel";
 import TicketValue from "@/app/components/movie/TicketValue";
 import ScoreBox from "@/app/components/movie/ScoreBox";
 import Perforation from "@/app/components/movie/Perforation";
+import MovieActions from "@/app/components/movie/MovieActions";
 import MovieCard from "@/app/components/ui/MovieCard";
 import { getMovieDetailData } from "@/services/movie";
 
@@ -149,14 +150,7 @@ export default async function MovieDetailPage({
                 </div>
               )}
 
-              <div className="flex flex-wrap gap-2 mt-6">
-                <button
-                  className="px-5 py-2.5 text-xs font-black tracking-widest uppercase transition-opacity hover:opacity-80"
-                  style={{ background: "#ffbd3f", color: "#000" }}
-                >
-                  VER AHORA
-                </button>
-              </div>
+              <MovieActions tmdbId={movie.id} />
             </div>
           </div>
 

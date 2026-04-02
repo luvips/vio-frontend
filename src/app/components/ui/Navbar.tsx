@@ -1,19 +1,17 @@
 "use client";
 
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/app/components/auth/AuthProvider";
 
 export default function Navbar() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [term, setTerm] = useState(searchParams.get("q") ?? "");
+  const { status, logout } = useAuth();
+  const [term, setTerm] = useState("");
   const previousRouteRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    setTerm(searchParams.get("q") ?? "");
-  }, [searchParams]);
 
   function navigateSearch(rawValue: string) {
     const trimmed = rawValue.trim();
@@ -60,9 +58,8 @@ export default function Navbar() {
         {/* Nav links */}
         <nav className="hidden md:flex items-center gap-8 text-xs font-black tracking-widest">
           {[
-            { label: "PELICULAS", href: "/" },
-            { label: "TOP RATED", href: "/top-rated" },
-            { label: "ESTRENOS", href: "/estrenos" },
+            { label: "INICIO", href: "/" },
+            { label: "BUSCAR", href: "/buscar" },
           ].map(({ label, href }) => (
             <Link
               key={label}
@@ -79,13 +76,38 @@ export default function Navbar() {
 
         <div className="flex-1" />
 
+        <div className="hidden sm:flex items-center gap-2">
+          {status === "authenticated" ? (
+            <button
+              type="button"
+              onClick={async () => {
+                await logout();
+                router.push("/");
+                router.refresh();
+              }}
+              className="px-3 py-2 text-[10px] font-black tracking-widest uppercase border-2"
+              style={{ borderColor: "#444", color: "#ffbd3f" }}
+            >
+              Cerrar sesion
+            </button>
+          ) : (
+            <Link
+              href="/auth"
+              className="px-3 py-2 text-[10px] font-black tracking-widest uppercase border-2"
+              style={{ borderColor: "#444", color: "#ffbd3f" }}
+            >
+              Ingresar
+            </Link>
+          )}
+        </div>
+
         {/* Search */}
         <form className="relative hidden sm:block" onSubmit={onSubmit}>
           <input
             type="text"
             placeholder="Buscar..."
             className="text-xs font-semibold px-4 py-2.5 pr-9 outline-none w-44 focus:w-60 transition-all duration-200"
-            value={term}
+            value={term || searchParams.get("q") || ""}
             onChange={(event) => {
               const value = event.target.value;
               setTerm(value);

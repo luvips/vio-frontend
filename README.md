@@ -1,5 +1,16 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Backend (vio-backend)
+
+Create a `.env.local` file with:
+
+```bash
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_API_PREFIX=/api/v1
+```
+
+If your base URL already includes `/api/v1`, you can omit `NEXT_PUBLIC_API_PREFIX`.
+
 ## Getting Started
 
 First, run the development server:
