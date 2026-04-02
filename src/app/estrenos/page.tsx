@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { getUpcomingMovies } from "@/lib/api";
 import { MoviesGrid, MoviesGridSkeleton } from "@/app/components/ui/MoviesGrid";
 
@@ -21,6 +22,16 @@ export default function EstrenosPage() {
         </div>
       </div>
       <div className="max-w-7xl mx-auto px-6 py-10">
+        <div className="mb-6 p-4 border-2" style={{ borderColor: "#ffcdd2", background: "#ffebee" }}>
+          <p className="text-xs font-black tracking-widest uppercase mb-1" style={{ color: "#e53935" }}>
+            Modo compatible
+          </p>
+          <p className="text-sm font-semibold" style={{ color: "#b71c1c" }}>
+            Esta lista se aproxima con resultados de busqueda. Para encontrar algo puntual, usa
+            {" "}
+            <Link href="/buscar?q=upcoming" className="underline font-black">BUSCAR</Link>.
+          </p>
+        </div>
         <Suspense fallback={<MoviesGridSkeleton />}>
           <Content />
         </Suspense>

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { getTopRatedMovies } from "@/lib/api";
 import { MoviesGrid, MoviesGridSkeleton } from "@/app/components/ui/MoviesGrid";
 
@@ -21,6 +22,16 @@ export default function TopRatedPage() {
         </div>
       </div>
       <div className="max-w-7xl mx-auto px-6 py-10">
+        <div className="mb-6 p-4 border-2" style={{ borderColor: "#c5cae9", background: "#eef1ff" }}>
+          <p className="text-xs font-black tracking-widest uppercase mb-1" style={{ color: "#3949ab" }}>
+            Modo compatible
+          </p>
+          <p className="text-sm font-semibold" style={{ color: "#3949ab" }}>
+            Esta lista se aproxima con resultados de busqueda. Para mayor precision usa
+            {" "}
+            <Link href="/buscar?q=top%20rated" className="underline font-black">BUSCAR</Link>.
+          </p>
+        </div>
         <Suspense fallback={<MoviesGridSkeleton />}>
           <Content />
         </Suspense>
