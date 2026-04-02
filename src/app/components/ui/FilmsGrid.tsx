@@ -7,6 +7,8 @@ import MovieCard from "./MovieCard";
 import SkeletonCard from "./SkeletonCard";
 import { type Movie } from "@/lib/movies";
 
+const POPULAR_SEED_QUERIES = ["the", "film", "movie", "love", "war", "world"];
+
 export default function FilmsGrid() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,30 +22,52 @@ export default function FilmsGrid() {
       setHasError(false);
 
       try {
-        const response = await fetch("/api/backend/movies/search?query=popular", {
-          method: "GET",
-          credentials: "include",
-          cache: "no-store",
+        const responses = await Promise.all(
+          POPULAR_SEED_QUERIES.map((query) =>
+            fetch(`/api/backend/movies/search?query=${encodeURIComponent(query)}`, {
+              method: "GET",
+              credentials: "include",
+              cache: "no-store",
+            })
+          )
+        );
+
+        const payloads = await Promise.all(
+          responses.map(async (response) => {
+            if (!response.ok) {
+              throw new Error(`Failed with status ${response.status}`);
+            }
+            return (await response.json()) as { results?: unknown };
+          })
+        );
+
+        const merged = payloads.flatMap((payload) => (Array.isArray(payload.results) ? payload.results : []));
+        const byId = new Map<number, { movie: Movie; popularity: number }>();
+
+        merged.forEach((item) => {
+          const parsedMovie = MovieSchema.safeParse(item);
+          if (!parsedMovie.success) return;
+
+          const movie = parsedMovie.data;
+          const popularity =
+            typeof (item as { popularity?: unknown }).popularity === "number"
+              ? (item as { popularity: number }).popularity
+              : movie.vote_average;
+
+          const existing = byId.get(movie.id);
+          if (!existing || popularity > existing.popularity) {
+            byId.set(movie.id, {
+              movie,
+              popularity,
+            });
+          }
         });
 
-        if (!response.ok) {
-          throw new Error(`Failed with status ${response.status}`);
-        }
-
-        const data = (await response.json()) as { results?: unknown };
-        const rawResults = Array.isArray(data.results) ? data.results : [];
-        const parsed = rawResults
-          .map((item) => {
-            const parsedMovie = MovieSchema.safeParse(item);
-            const score =
-              typeof (item as { popularity?: unknown }).popularity === "number"
-                ? (item as { popularity: number }).popularity
-                : 0;
-            return { parsedMovie, score };
+        const parsed = [...byId.values()]
+          .sort((a, b) => {
+            return b.popularity - a.popularity;
           })
-          .filter((result) => result.parsedMovie.success)
-          .sort((a, b) => b.score - a.score)
-          .map((result) => result.parsedMovie.data)
+          .map((entry) => entry.movie)
           .slice(0, PAGE_SIZE);
 
         if (isMounted) {
