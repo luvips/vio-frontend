@@ -3,6 +3,8 @@ import Link from "next/link";
 import { getTopRatedMovies } from "@/lib/api";
 import { MoviesGrid, MoviesGridSkeleton } from "@/app/components/ui/MoviesGrid";
 
+export const dynamic = "force-dynamic";
+
 async function Content() {
   const { results: movies } = await getTopRatedMovies();
   return <MoviesGrid movies={movies} />;

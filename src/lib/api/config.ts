@@ -1,8 +1,6 @@
-const rawApiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
-if (!rawApiBaseUrl) {
-  throw new Error("Falta NEXT_PUBLIC_API_BASE_URL en .env");
-}
+const rawApiBaseUrl =
+  process.env.NEXT_PUBLIC_API_BASE_URL ??
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
 
 const apiPrefix = process.env.NEXT_PUBLIC_API_PREFIX ?? "/api/v1";
 const normalizedBase = rawApiBaseUrl.replace(/\/$/, "");

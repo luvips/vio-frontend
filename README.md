@@ -7,9 +7,11 @@ Create a `.env.local` file with:
 ```bash
 NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
 NEXT_PUBLIC_API_PREFIX=/api/v1
+NEXT_PUBLIC_MOVIE_IMAGE_BASE_URL=https://image.tmdb.org/t/p
 ```
 
 If your base URL already includes `/api/v1`, you can omit `NEXT_PUBLIC_API_PREFIX`.
+If `NEXT_PUBLIC_MOVIE_IMAGE_BASE_URL` is omitted, the app now defaults to `https://image.tmdb.org/t/p`.
 
 ## Getting Started
 

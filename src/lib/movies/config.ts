@@ -1,10 +1,7 @@
-const movieImageBaseUrl = process.env.NEXT_PUBLIC_MOVIE_IMAGE_BASE_URL;
+const DEFAULT_MOVIE_IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 
-if (!movieImageBaseUrl) {
-  throw new Error("Missing NEXT_PUBLIC_MOVIE_IMAGE_BASE_URL environment variable");
-}
-
-export const MOVIE_IMAGE_BASE_URL = movieImageBaseUrl;
+export const MOVIE_IMAGE_BASE_URL =
+  process.env.NEXT_PUBLIC_MOVIE_IMAGE_BASE_URL ?? DEFAULT_MOVIE_IMAGE_BASE_URL;
 
 export const POSTER_SIZES = {
   small: "w185",

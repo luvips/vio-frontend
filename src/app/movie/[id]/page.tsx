@@ -9,6 +9,8 @@ import MovieActions from "@/app/components/movie/MovieActions";
 import MovieCard from "@/app/components/ui/MovieCard";
 import { getMovieDetailData } from "@/services/movie";
 
+export const dynamic = "force-dynamic";
+
 const PALETTE = ["#e53935","#ff6d00","#43a047","#00acc1","#3949ab","#e91e8c","#8e24aa","#795548"];
 
 export default async function MovieDetailPage({

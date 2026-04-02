@@ -2,6 +2,8 @@ import Link from "next/link";
 import { searchMovies } from "@/lib/api";
 import { MoviesGrid } from "@/app/components/ui/MoviesGrid";
 
+export const dynamic = "force-dynamic";
+
 function buildSearchUrl(query: string, page: number) {
   const params = new URLSearchParams();
   params.set("q", query);

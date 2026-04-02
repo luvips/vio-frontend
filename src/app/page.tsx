@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import FilmsGrid, { FilmsGridSkeleton } from "./components/ui/FilmsGrid";
 
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   return (
     <main>

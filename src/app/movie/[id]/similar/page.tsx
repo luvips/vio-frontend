@@ -3,6 +3,8 @@ import BackButton from "@/app/components/ui/BackButton";
 import PaginationLinks from "@/app/components/movie/PaginationLinks";
 import { getSimilarMoviesPageData } from "@/services/movie";
 
+export const dynamic = "force-dynamic";
+
 export default async function SimilarMoviesPage({
   params,
   searchParams,
