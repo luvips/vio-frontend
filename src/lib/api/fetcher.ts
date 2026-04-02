@@ -2,13 +2,15 @@ import { API_BASE_URL } from "./config";
 
 export async function fetchBackend<T>(path: string, init?: RequestInit): Promise<T> {
   const url = path.startsWith("http") ? path : `${API_BASE_URL}${path}`;
+  const method = (init?.method ?? "GET").toUpperCase();
   const response = await fetch(url, {
     ...init,
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...(init?.headers ?? {}),
     },
-    next: { revalidate: 300 },
+    ...(method === "GET" ? { next: { revalidate: 300 } } : { cache: "no-store" }),
   });
 
   if (!response.ok) {
