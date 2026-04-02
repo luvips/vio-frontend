@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/ui/Navbar";
+import { AuthProvider } from "./components/auth/AuthProvider";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -23,10 +24,12 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${poppins.variable} antialiased`}>
-        <Suspense fallback={<div style={{ height: 70, background: "#000" }} />}>
-          <Navbar />
-        </Suspense>
-        {children}
+        <AuthProvider>
+          <Suspense fallback={<div style={{ height: 70, background: "#000" }} />}>
+            <Navbar />
+          </Suspense>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
