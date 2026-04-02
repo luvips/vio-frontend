@@ -1,7 +1,5 @@
-import { API_BASE_URL } from "./config";
-
 export async function fetchBackend<T>(path: string, init?: RequestInit): Promise<T> {
-  const url = path.startsWith("http") ? path : `${API_BASE_URL}${path}`;
+  const url = path.startsWith("http") ? path : `/api/backend${path}`;
   const method = (init?.method ?? "GET").toUpperCase();
   const response = await fetch(url, {
     ...init,

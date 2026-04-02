@@ -13,6 +13,8 @@ NEXT_PUBLIC_MOVIE_IMAGE_BASE_URL=https://image.tmdb.org/t/p
 If your base URL already includes `/api/v1`, you can omit `NEXT_PUBLIC_API_PREFIX`.
 If `NEXT_PUBLIC_MOVIE_IMAGE_BASE_URL` is omitted, the app now defaults to `https://image.tmdb.org/t/p`.
 
+The frontend routes API calls through `/api/backend/*` (internal proxy). This avoids browser CORS issues and helps keep auth cookies working across page reloads without local storage.
+
 ## Getting Started
 
 First, run the development server:
