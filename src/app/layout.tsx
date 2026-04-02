@@ -12,7 +12,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "GALI",
+  title: "VIO",
   description: "Descubre las mejores peliculas",
 };
 

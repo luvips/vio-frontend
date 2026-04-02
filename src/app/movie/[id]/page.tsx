@@ -196,7 +196,7 @@ export default async function MovieDetailPage({
             style={{ borderTop: "3px solid #000", background: "#000" }}
           >
             <span className="font-black text-xs tracking-widest" style={{ color: "#ffbd3f" }}>
-              GALI — #{movie.id}
+              VIO — #{movie.id}
             </span>
             <span className="font-black text-xs tracking-widest text-white opacity-40">
               ★ NOT TRANSFERABLE ★

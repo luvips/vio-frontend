@@ -48,10 +48,10 @@ export default function Navbar() {
             className="font-black text-2xl px-2 py-0.5 text-black tracking-tighter"
             style={{ background: "#ffbd3f" }}
           >
-            G
+            V
           </span>
           <span className="font-black text-2xl text-white tracking-tighter px-1">
-            ALI
+            IO
           </span>
         </Link>
 

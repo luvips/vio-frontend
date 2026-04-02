@@ -7,7 +7,7 @@ export default function Home() {
       <div style={{ background: "#ffbd3f", borderBottom: "4px solid #000" }}>
         <div className="max-w-7xl mx-auto px-6 py-12">
           <p className="text-xs font-black tracking-widest text-black mb-2 uppercase">
-            Bienvenido a GALI
+            Bienvenido a VIO
           </p>
           <h1 className="text-4xl md:text-5xl font-black text-black leading-none mb-3">
             BUSCA Y EXPLORA<br />PELICULAS
