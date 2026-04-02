@@ -16,8 +16,17 @@ export async function fetchBackend<T>(path: string, init?: RequestInit): Promise
   if (!response.ok) {
     let detail = "";
     try {
-      const body = (await response.json()) as { error?: string; detail?: string };
-      detail = body.detail || body.error || "";
+      const body = (await response.json()) as {
+        error?: string;
+        detail?: string;
+        message?: string | string[];
+      };
+
+      if (Array.isArray(body.message)) {
+        detail = body.message.join(". ");
+      } else {
+        detail = body.detail || body.error || body.message || "";
+      }
     } catch {
       detail = "";
     }

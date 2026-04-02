@@ -6,8 +6,20 @@ import { useAuth } from "@/app/components/auth/AuthProvider";
 
 type Mode = "login" | "register";
 
+function isStrongPassword(password: string): boolean {
+  return /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(password);
+}
+
 function humanizeError(error: unknown): string {
   if (error instanceof Error) {
+    if (error.message.includes("API error 429")) {
+      return "Demasiados intentos. Espera 15 minutos antes de volver a intentar.";
+    }
+
+    if (error.message.includes("API error 401")) {
+      return "Credenciales invalidas o sesion expirada.";
+    }
+
     return error.message;
   }
   return "No se pudo completar la solicitud";
@@ -26,6 +38,8 @@ export default function AuthPage() {
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isSubmitting) return;
+
     setIsSubmitting(true);
     setMessage(null);
     setError(null);
@@ -34,6 +48,10 @@ export default function AuthPage() {
       const credentials = { email: email.trim(), password };
 
       if (mode === "register") {
+        if (!isStrongPassword(password)) {
+          throw new Error("La contrasena debe tener al menos 8 caracteres, 1 mayuscula, 1 numero y 1 simbolo.");
+        }
+
         await register(credentials);
         setMessage("Cuenta creada. Ahora inicia sesion.");
         setMode("login");
@@ -103,12 +121,18 @@ export default function AuthPage() {
                 <input
                   type="password"
                   required
+                  minLength={8}
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   className="w-full border-2 px-3 py-2 text-sm font-semibold outline-none"
                   style={{ borderColor: "#ccc" }}
                   placeholder="********"
                 />
+                {mode === "register" && (
+                  <p className="text-[11px] font-semibold mt-1" style={{ color: "#666" }}>
+                    Minimo 8 caracteres, 1 mayuscula, 1 numero y 1 simbolo.
+                  </p>
+                )}
               </div>
 
               <button
