@@ -60,6 +60,8 @@ export default function Navbar() {
           {[
             { label: "INICIO", href: "/" },
             { label: "BUSCAR", href: "/buscar" },
+            { label: "FAVORITOS", href: "/favoritos" },
+            { label: "VER MAS TARDE", href: "/ver-mas-tarde" },
           ].map(({ label, href }) => (
             <Link
               key={label}

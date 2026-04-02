@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { addToFavorites, addToWatchLater } from "@/lib/api";
 import { useAuth } from "@/app/components/auth/AuthProvider";
+import { addStoredMovieId } from "@/lib/movies/lists";
 
 function humanizeError(error: unknown): string {
   if (error instanceof Error) return error.message;
@@ -24,9 +25,11 @@ export default function MovieActions({ tmdbId }: { tmdbId: number }) {
     try {
       if (type === "favorite") {
         const result = await addToFavorites(tmdbId);
+        addStoredMovieId("favorites", tmdbId);
         setFeedback(result.message || "Anadido a favoritos");
       } else {
         const result = await addToWatchLater(tmdbId);
+        addStoredMovieId("watchLater", tmdbId);
         setFeedback(result.message || "Anadido a ver mas tarde");
       }
     } catch (err) {
