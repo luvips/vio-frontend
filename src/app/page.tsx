@@ -1,17 +1,7 @@
 import { Suspense } from "react";
 import FilmsGrid, { FilmsGridSkeleton } from "./components/ui/FilmsGrid";
-import { type HomeTab } from "@/services/home";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: Promise<{ tab?: string; genre?: string; page?: string }>;
-}) {
-  const { tab: tabParam, genre: genreParam, page: pageParam } = await searchParams;
-  const tab: HomeTab = tabParam === "popular" || tabParam === "top" ? tabParam : "all";
-  const genre = genreParam ? Number(genreParam) : null;
-  const page = Math.max(1, Number(pageParam ?? 1));
-
+export default function Home() {
   return (
     <main>
       <div style={{ background: "#ffbd3f", borderBottom: "4px solid #000" }}>
@@ -20,13 +10,16 @@ export default async function Home({
             Bienvenido a GALI
           </p>
           <h1 className="text-4xl md:text-5xl font-black text-black leading-none mb-3">
-            DESCUBRE LAS<br />MEJORES PELICULAS
+            BUSCA Y EXPLORA<br />PELICULAS
           </h1>
+          <p className="text-sm font-bold text-black/70 max-w-2xl">
+            Conectado con VIO Backend: usa el buscador para encontrar peliculas y abre cada detalle para ver su informacion completa.
+          </p>
         </div>
       </div>
 
       <Suspense fallback={<FilmsGridSkeleton />}>
-        <FilmsGrid tab={tab} genre={genre} page={page} />
+        <FilmsGrid />
       </Suspense>
     </main>
   );
