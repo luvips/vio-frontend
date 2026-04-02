@@ -1,4 +1,4 @@
-import { MovieListSchema, type MovieList } from "@/schemas/movie";
+import { MovieListSchema, MovieSchema, type MovieList } from "@/schemas/movie";
 import { MovieDetailSchema, type MovieDetail } from "@/schemas/movie-detail";
 import { MovieCreditsSchema, type MovieCredits } from "@/schemas/credits";
 import { GENRE_NAMES } from "@/lib/movies";
@@ -37,19 +37,44 @@ function emptyMovieDetail(id: number): MovieDetail {
 
 function toMovieList(data: unknown): MovieList {
 	if (Array.isArray(data)) {
+		const normalized = data
+			.map((item) => MovieSchema.safeParse(item))
+			.filter((result) => result.success)
+			.map((result) => result.data);
+
 		return MovieListSchema.parse({
 			page: 1,
-			results: data,
+			results: normalized,
 			total_pages: 1,
-			total_results: data.length,
+			total_results: normalized.length,
 		});
 	}
 
-	const parsed = MovieListSchema.parse(data);
+	const obj = (data ?? {}) as {
+		page?: unknown;
+		results?: unknown;
+		total_pages?: unknown;
+		total_results?: unknown;
+	};
+
+	const rawResults = Array.isArray(obj.results) ? obj.results : [];
+	const normalizedResults = rawResults
+		.map((item) => MovieSchema.safeParse(item))
+		.filter((result) => result.success)
+		.map((result) => result.data);
+
+	const parsed = MovieListSchema.parse({
+		page: typeof obj.page === "number" ? obj.page : 1,
+		results: normalizedResults,
+		total_pages: typeof obj.total_pages === "number" ? obj.total_pages : 1,
+		total_results:
+			typeof obj.total_results === "number" ? obj.total_results : normalizedResults.length,
+	});
+
 	return {
 		...parsed,
-		total_pages: 1,
-		total_results: parsed.results.length,
+		total_pages: Math.max(1, parsed.total_pages || 1),
+		total_results: Math.max(parsed.total_results, parsed.results.length),
 	};
 }
 
