@@ -27,6 +27,14 @@ export default async function FilmsGrid() {
           <MovieCard key={movie.id} movie={movie} />
         ))}
       </div>
+
+      {movies.length === 0 && (
+        <div className="py-14 text-center">
+          <p className="text-sm font-bold" style={{ color: "#888" }}>
+            No se pudieron cargar peliculas desde el backend.
+          </p>
+        </div>
+      )}
     </section>
   );
 }

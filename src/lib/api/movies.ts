@@ -9,6 +9,32 @@ type ActionResult = {
 	message?: string;
 };
 
+function emptyMovieList(): MovieList {
+	return {
+		page: 1,
+		results: [],
+		total_pages: 1,
+		total_results: 0,
+	};
+}
+
+function emptyMovieDetail(id: number): MovieDetail {
+	return {
+		id,
+		title: "Pelicula no disponible",
+		overview: "No se pudo cargar la informacion de esta pelicula.",
+		poster_path: null,
+		backdrop_path: null,
+		release_date: "",
+		vote_average: 0,
+		vote_count: 0,
+		runtime: null,
+		tagline: null,
+		genres: [],
+		status: "Unavailable",
+	};
+}
+
 function toMovieList(data: unknown): MovieList {
 	if (Array.isArray(data)) {
 		return MovieListSchema.parse({
@@ -34,9 +60,13 @@ function keywordForType(type: "popular" | "top_rated" | "upcoming"): string {
 }
 
 async function searchList(query: string): Promise<MovieList> {
-	const params = new URLSearchParams({ query });
-	const data = await fetchBackend<unknown>(`/movies/search?${params.toString()}`);
-	return toMovieList(data);
+	try {
+		const params = new URLSearchParams({ query });
+		const data = await fetchBackend<unknown>(`/movies/search?${params.toString()}`);
+		return toMovieList(data);
+	} catch {
+		return emptyMovieList();
+	}
 }
 
 export async function getPopularMovies(page = 1): Promise<MovieList> {
@@ -72,8 +102,12 @@ export async function discoverMovies(opts: {
 }
 
 export async function getMovieDetails(id: number): Promise<MovieDetail> {
-	const data = await fetchBackend<unknown>(`/movies/${id}`);
-	return MovieDetailSchema.parse(data);
+	try {
+		const data = await fetchBackend<unknown>(`/movies/${id}`);
+		return MovieDetailSchema.parse(data);
+	} catch {
+		return emptyMovieDetail(id);
+	}
 }
 
 export async function getMovieCredits(id: number): Promise<MovieCredits> {
