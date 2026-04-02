@@ -25,10 +25,20 @@ async function proxyRequest(request: NextRequest, context: RouteContext) {
     cache: "no-store",
   });
 
+  const rawBody = await upstreamResponse.arrayBuffer();
   const responseHeaders = new Headers(upstreamResponse.headers);
   responseHeaders.delete("content-encoding");
+  responseHeaders.delete("content-length");
+  responseHeaders.delete("transfer-encoding");
+  responseHeaders.delete("connection");
+  responseHeaders.delete("keep-alive");
+  responseHeaders.delete("proxy-authenticate");
+  responseHeaders.delete("proxy-authorization");
+  responseHeaders.delete("te");
+  responseHeaders.delete("trailer");
+  responseHeaders.delete("upgrade");
 
-  return new NextResponse(upstreamResponse.body, {
+  return new NextResponse(rawBody, {
     status: upstreamResponse.status,
     headers: responseHeaders,
   });
