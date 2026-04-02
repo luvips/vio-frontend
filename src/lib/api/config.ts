@@ -1,7 +1,12 @@
-const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+const rawApiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-if (!apiBaseUrl) {
+if (!rawApiBaseUrl) {
   throw new Error("Falta NEXT_PUBLIC_API_BASE_URL en .env");
 }
 
-export const API_BASE_URL = apiBaseUrl;
+const apiPrefix = process.env.NEXT_PUBLIC_API_PREFIX ?? "/api/v1";
+const normalizedBase = rawApiBaseUrl.replace(/\/$/, "");
+const normalizedPrefix = apiPrefix.startsWith("/") ? apiPrefix : `/${apiPrefix}`;
+const hasPrefixAlready = normalizedBase.endsWith(normalizedPrefix);
+
+export const API_BASE_URL = hasPrefixAlready ? normalizedBase : `${normalizedBase}${normalizedPrefix}`;
